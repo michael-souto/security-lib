@@ -115,11 +115,11 @@ export class AuthMobileService extends AuthService {
     } else {
       const token = localStorage.getItem(environment.tokenGetter);
       if (token) {
-        //this.payload = this.jwtHelper.decodeToken(token);
-        console.log(this.payload);
         const dateExpiresIn = this.jwtHelper.getTokenExpirationDate(token);
         const expiresIn = Math.floor(( dateExpiresIn.getTime()- new Date().getTime()) / 1000);
-        this.createRefreshTokenTimer(expiresIn);
+        if (expiresIn > 0) {
+          this.createRefreshTokenTimer(expiresIn);
+        }
       }
     }
   }

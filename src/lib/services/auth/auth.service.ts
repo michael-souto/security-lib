@@ -251,6 +251,5 @@ export class AuthService implements OnDestroy {
       }, refreshTime * 1000);
       console.log(`Timer de refresh token configurado para chamar em ${refreshTime} segundos.`);
     }
-    console.log(this.payload)
   }
 }
