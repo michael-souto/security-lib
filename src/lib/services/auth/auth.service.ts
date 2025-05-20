@@ -198,6 +198,13 @@ export class AuthService implements OnDestroy {
     return this.payload?.userId;
   }
 
+  public getUserFirstName(): string {
+    return this.payload?.firstName;
+  }
+
+  public getUserLastName(): string {
+    return this.payload?.lastName;
+  }
   public getUserFullName(): string {
     return `${this.payload?.firstName} ${this.payload?.lastName}`;
   }
@@ -208,6 +215,14 @@ export class AuthService implements OnDestroy {
 
   public getUserBusiness(): string {
     return this.payload?.business;
+  }
+
+  public getUrlImage(): string {
+    return this.payload.urlImage ?? 'assets/layout/images/avatar-64.png';
+  }
+
+  public getUserEmail(): string {
+    return this.payload['sub'];
   }
 
   public redirectToLogin() {
