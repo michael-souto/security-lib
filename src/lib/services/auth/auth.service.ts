@@ -39,7 +39,7 @@ export class AuthService implements OnDestroy {
     actionSussess: () => void
   ): Promise<void> {
     console.log('Limpando token de acesso para login!');
-    this.limparAccessToken();
+    this.clearToken();
 
     const headersLogin = new HttpHeaders().append('Content-Type', 'application/json');
     const body = JSON.stringify({email: user,password: password});
@@ -65,6 +65,11 @@ export class AuthService implements OnDestroy {
 
         return Promise.reject(response);
       });
+  }
+
+  logout() {
+    this.clearToken();
+    this.redirectToLogin();
   }
 
   protected async saveLoginData(user: string, password: string){}
@@ -133,12 +138,16 @@ export class AuthService implements OnDestroy {
     this.redirectToLogin();
   }
 
-  limparAccessToken() {
+  clearToken() {
     localStorage.removeItem(environment.tokenGetter);
+    localStorage.removeItem(environment.refreshTokenGetter);
   }
 
   isInvalidAccessToken() {
     const token = localStorage.getItem(environment.tokenGetter);
+    if (token == 'undefined' || token == null || token == undefined || token == '') {
+      return true;
+    }
     return !token || this.jwtHelper.isTokenExpired(token);
   }
 
