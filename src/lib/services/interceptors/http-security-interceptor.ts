@@ -35,14 +35,15 @@ export class HttpSecurityInterceptor implements HttpInterceptor {
       !req.url.includes(environment.endPointAPIRefreshToken) &&
       req.url.indexOf('/assets') < 0
       ) {
-      console.log('Navegação com access token inválido. Obtendo novo token...',
+        console.log('Navegação com access token inválido. Obtendo novo token...',
         (this.auth.isInvalidAccessToken()),
         (!this.auth.isLoginPage()),
         (!this.auth.isRegisterPage()),
         (!req.url.includes(environment.endPointAPILogin)),
         (!req.url.includes(environment.endPointAPIRegister)),
         (!req.url.includes(environment.endPointAPIRefreshToken)),
-        (req.url.indexOf('/assets') < 0)
+        (req.url.indexOf('/assets') < 0),
+        ('req.url: ' + req.url),
       );
       return from(this.auth.getNewAccessToken()).pipe(
         mergeMap(() => {
