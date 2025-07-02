@@ -33,6 +33,7 @@ export class HttpSecurityInterceptor implements HttpInterceptor {
       !req.url.includes(environment.endPointAPILogin) &&
       !req.url.includes(environment.endPointAPIRegister) &&
       !req.url.includes(environment.endPointAPIRefreshToken) &&
+      !req.url.includes('/public/') &&
       req.url.indexOf('/assets') < 0
       ) {
         console.log('Navegação com access token inválido. Obtendo novo token...',
@@ -42,6 +43,7 @@ export class HttpSecurityInterceptor implements HttpInterceptor {
         (!req.url.includes(environment.endPointAPILogin)),
         (!req.url.includes(environment.endPointAPIRegister)),
         (!req.url.includes(environment.endPointAPIRefreshToken)),
+        (!req.url.includes('/public/')),
         (req.url.indexOf('/assets') < 0),
         ('req.url: ' + req.url),
       );
