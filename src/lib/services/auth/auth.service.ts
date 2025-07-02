@@ -1,3 +1,4 @@
+import { EventBusService } from 'projects/design-lib/src/lib/services/event-bus.service';
 import { JwtPayload } from './../../models/token.model';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -25,7 +26,8 @@ export class AuthService implements OnDestroy {
     protected http: HttpClient,
     protected jwtHelper: JwtHelperService,
     protected router: Router,
-    protected cryptoService: CryptoService
+    protected cryptoService: CryptoService,
+    protected eventBus: EventBusService
   ) {
   }
 
@@ -53,6 +55,7 @@ export class AuthService implements OnDestroy {
       .then(async (response: any) => {
         this.saveToken(response);
         this.createRefreshTokenTimer(this.payload['expiresIn']);
+        this.eventBus.emit({ type: 'user:logged' });
         await this.saveLoginData(user, password);
         actionSussess();
       })

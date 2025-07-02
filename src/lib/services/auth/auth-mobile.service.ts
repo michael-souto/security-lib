@@ -21,6 +21,7 @@ import { AuthService } from './auth.service';
 import { AuthenticationResponse } from '../../models/token.model';
 import { ConfigSystemSqliteService } from 'projects/mobile-lib/src/lib/services/config/config-system-sqlite.service';
 import { UtilsMobileService } from 'projects/mobile-lib/src/lib/services/utils/app-utils.service';
+import { EventBusService } from 'projects/design-lib/src/lib/services/event-bus.service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,10 +33,11 @@ export class AuthMobileService extends AuthService {
     protected override jwtHelper: JwtHelperService,
     protected override router: Router,
     protected override cryptoService: CryptoService,
+    protected override eventBus: EventBusService,
     protected _utilsMobileService: UtilsMobileService,
     protected _configSystemSqliteService: ConfigSystemSqliteService,
   ) {
-    super(http, jwtHelper, router, cryptoService);
+    super(http, jwtHelper, router, cryptoService, eventBus);
   }
 
   protected override async saveLoginData(user: string, password: string){
