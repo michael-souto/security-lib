@@ -279,4 +279,27 @@ export class AuthService implements OnDestroy {
       console.log(`Timer de refresh token configurado para chamar em ${refreshTime} segundos.`);
     }
   }
+
+  changePassword(currentPassword: string, password: string, confirmPassword: string): Promise<void> {
+    const url = `${environment.apiUrlAuth}/auth/change_password`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    const body = {
+      oldPassword: currentPassword,
+      newPassword: password,
+      confirmNewPassword: confirmPassword
+    };
+
+    return this.http.post<void>(url, body, { headers })
+      .toPromise()
+      .then(() => {
+        console.log('Senha alterada com sucesso');
+      })
+      .catch((error) => {
+        console.error('Erro ao alterar a senha:', error);
+        return Promise.reject(error);
+      });
+  }
 }
