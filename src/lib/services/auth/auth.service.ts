@@ -176,6 +176,7 @@ export class AuthService implements OnDestroy {
     console.log('ARMAZENANDO TOKEN ----------------------------------');
     localStorage.setItem(environment.tokenGetter, token.access_token);
     localStorage.setItem(environment.refreshTokenGetter, token.refresh_token);
+    this.updateUrlImage(this.payload?.urlImg);
     this.executeAfterSaveToken(token);
   }
 
@@ -230,11 +231,18 @@ export class AuthService implements OnDestroy {
   }
 
   public getUrlImage(): string {
-    return this.payload.urlImg ?? 'assets/layout/images/avatar-64.png';
+    const customImage = localStorage.getItem('user_url_image');
+    if (customImage) return customImage;
+    this.updateUrlImage(this.payload?.urlImg ?? 'assets/layout/images/avatar-64.png');
+    return customImage;
   }
 
   public getUserEmail(): string {
     return this.payload['sub'];
+  }
+
+  updateUrlImage(urlImg: string) {
+    localStorage.setItem('user_url_image', urlImg);
   }
 
   public redirectToLogin() {
