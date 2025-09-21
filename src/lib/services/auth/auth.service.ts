@@ -230,7 +230,7 @@ export class AuthService implements OnDestroy {
   }
 
   public getUrlImage(): string {
-    return this.payload.urlImage ?? 'assets/layout/images/avatar-64.png';
+    return this.payload.urlImg ?? 'assets/layout/images/avatar-64.png';
   }
 
   public getUserEmail(): string {

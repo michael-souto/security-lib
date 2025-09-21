@@ -12,7 +12,7 @@ export class User extends GenericEntity {
     phone: string;
     detrasoftId: number;
     business: string;
-    urlImage: string;
+    urlImg: string;
     urlHome: string;
     createdAt: Date;
     updatedAt: Date;
