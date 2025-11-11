@@ -77,7 +77,7 @@ export class AuthMobileService extends AuthService {
     }
   }
 
-  public async carregarToken() {
+  public override async carregarToken() {
     console.log('CARREGANDO TOKEN');
     if (this._utilsMobileService.isMobile()) {
       // Se estiverm em mobile deve carregar o token a partir do que estiver no banco de dados.
