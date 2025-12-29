@@ -63,7 +63,7 @@ export class AuthMobileService extends AuthService {
       if (login != null && pass != null) {
         const loginDecript = await this.cryptoService.decrypt(login.config);
         const passDecript = await this.cryptoService.decrypt(pass.config);
-        this.login(loginDecript, passDecript, () => {console.log('DEU CERTO!!!')});
+        this.login(loginDecript, passDecript, () => {console.log('OK!')});
       }
     } else {
       this.redirectToLogin();
@@ -78,7 +78,6 @@ export class AuthMobileService extends AuthService {
   }
 
   public override async carregarToken() {
-    console.log('CARREGANDO TOKEN');
     if (this._utilsMobileService.isMobile()) {
       // Se estiverm em mobile deve carregar o token a partir do que estiver no banco de dados.
       const sessionFinded = await this._configSystemSqliteService.findByCode(
