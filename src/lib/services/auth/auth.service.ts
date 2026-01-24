@@ -288,8 +288,8 @@ export class AuthService implements OnDestroy {
     }
   }
 
-  public async carregarToken() {
-    const token = localStorage.getItem(environment.tokenGetter);
+  public async carregarToken(tokenGetter: string = null) {
+    const token = localStorage.getItem(tokenGetter ?? environment.tokenGetter);
     if (token) {
       const dateExpiresIn = this.jwtHelper.getTokenExpirationDate(token);
       const expiresIn = Math.floor(( dateExpiresIn.getTime()- new Date().getTime()) / 1000);
