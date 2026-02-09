@@ -3,6 +3,7 @@ import { JwtPayload } from './../../models/token.model';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -14,6 +15,14 @@ import { AuthenticationResponse } from '../../models/token.model';
   providedIn: 'root',
 })
 export class AuthService implements OnDestroy {
+
+  // Estado de loading do refresh token
+  private _isRefreshingToken = new BehaviorSubject<boolean>(false);
+  public isRefreshingToken$: Observable<boolean> = this._isRefreshingToken.asObservable();
+
+  get isRefreshingToken(): boolean {
+    return this._isRefreshingToken.value;
+  }
 
   get payload(): JwtPayload | null {
     const token = localStorage.getItem(environment.tokenGetter);
@@ -76,6 +85,20 @@ export class AuthService implements OnDestroy {
   }
 
   protected async saveLoginData(user: string, password: string){}
+
+
+  checkSubscription(subscriptionName: string) {
+    if (!this.isLogged()) {
+      return;
+    }
+    if (this.payload[subscriptionName] == null) {
+      this.getNewAccessToken().then(() => {
+        console.info('Token de assinatura atualizado');
+      }).catch((err) => {
+        console.error('Erro ao atualizar token de assinatura:', err);
+      });
+    }
+  }
 
   getNewAccessToken(): Promise<any> {
     const headersRefreshToken = new HttpHeaders()
@@ -289,15 +312,20 @@ export class AuthService implements OnDestroy {
   }
 
   public async carregarToken(tokenGetter: string = null) {
-    const token = localStorage.getItem(tokenGetter ?? environment.tokenGetter);
-    if (token) {
-      const dateExpiresIn = this.jwtHelper.getTokenExpirationDate(token);
-      const expiresIn = Math.floor(( dateExpiresIn.getTime()- new Date().getTime()) / 1000);
-      if (expiresIn > 0) {
-        this.createRefreshTokenTimer(expiresIn);
-      } else {
-        this.getNewAccessToken();
+    this._isRefreshingToken.next(true);
+    try {
+      const token = localStorage.getItem(tokenGetter ?? environment.tokenGetter);
+      if (token) {
+        const dateExpiresIn = this.jwtHelper.getTokenExpirationDate(token);
+        const expiresIn = Math.floor((dateExpiresIn.getTime() - new Date().getTime()) / 1000);
+        if (expiresIn > 0) {
+          this.createRefreshTokenTimer(expiresIn);
+        } else {
+          await this.getNewAccessToken();
+        }
       }
+    } finally {
+      this._isRefreshingToken.next(false);
     }
   }
 
