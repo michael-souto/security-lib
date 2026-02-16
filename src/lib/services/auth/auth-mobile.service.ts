@@ -77,7 +77,27 @@ export class AuthMobileService extends AuthService {
     }
   }
 
-  public override async carregarToken() {
+  public override async carregarToken(tokenGetter: string = null) {
+    if (this._utilsMobileService.isConnected()) {
+      this._isRefreshingToken.next(true);
+      try {
+        const token = localStorage.getItem(tokenGetter ?? environment.tokenGetter);
+        if (token) {
+          const dateExpiresIn = this.jwtHelper.getTokenExpirationDate(token);
+          const expiresIn = Math.floor((dateExpiresIn.getTime() - new Date().getTime()) / 1000);
+          if (expiresIn > 0) {
+            this.createRefreshTokenTimer(expiresIn);
+          } else {
+            await this.getNewAccessToken();
+          }
+        }
+      } finally {
+        this._isRefreshingToken.next(false);
+      }
+    }
+  }
+
+  public async carregarTokenDB() {
     if (this._utilsMobileService.isMobile()) {
       // Se estiverm em mobile deve carregar o token a partir do que estiver no banco de dados.
       const sessionFinded = await this._configSystemSqliteService.findByCode(

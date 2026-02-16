@@ -17,7 +17,7 @@ import { AuthenticationResponse } from '../../models/token.model';
 export class AuthService implements OnDestroy {
 
   // Estado de loading do refresh token
-  private _isRefreshingToken = new BehaviorSubject<boolean>(false);
+  protected _isRefreshingToken = new BehaviorSubject<boolean>(false);
   public isRefreshingToken$: Observable<boolean> = this._isRefreshingToken.asObservable();
 
   get isRefreshingToken(): boolean {
