@@ -79,9 +79,11 @@ export class AuthService implements OnDestroy {
       });
   }
 
-  logout() {
+  logout(redirect: boolean = true) {
     this.clearToken();
-    this.redirectToLogin();
+    if (redirect) {
+      this.redirectToLogin();
+    }
   }
 
   protected async saveLoginData(user: string, password: string){}
