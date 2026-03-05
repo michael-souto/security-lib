@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 import { AuthMobileService } from '../auth/auth-mobile.service';
 import { UtilsMobileService } from 'projects/mobile-lib/src/lib/services/utils/app-utils.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthMobileGuard {
   constructor(
     private auth: AuthMobileService,

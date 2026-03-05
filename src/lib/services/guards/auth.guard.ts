@@ -1,17 +1,13 @@
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-
-import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
-import { UtilsService } from 'projects/design-lib/src/lib/services/utils/utils.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthGuard {
   constructor(
     private auth: AuthService,
-    private router: Router,
-    private _utilsService: UtilsService
+    private router: Router
   ) {}
 
   async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
