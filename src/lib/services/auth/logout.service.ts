@@ -3,7 +3,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { AuthService } from './auth-mobile.service';
+import { AuthService } from './auth.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class LogoutService {
   }
 
   logout() {
-    this.auth.limparAccessToken();
-    this.auth.redirectLogin();
+    this.auth.clearToken();
+    this.auth.redirectToLogin();
   }
 }

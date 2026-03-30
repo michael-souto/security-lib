@@ -3,26 +3,26 @@ import { Profile } from "./profile.model";
 import { UserType } from "./user-type.model";
 
 export class User extends GenericEntity {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    type: UserType;
-    status: string;
-    phone: string;
-    detrasoftId: number;
-    business: string;
-    urlImg: string;
-    urlHome: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userCreated: string;
-    userUpdated: string;
+    firstName!: string;
+    lastName!: string;
+    email!: string;
+    password!: string;
+    type!: UserType;
+    status!: string;
+    phone!: string;
+    detrasoftId!: number;
+    business!: string;
+    urlImg!: string;
+    urlHome!: string;
+    createdAt!: Date;
+    updatedAt!: Date;
+    userCreated!: string;
+    userUpdated!: string;
 
-    profiles: Profile[];
+    profiles!: Profile[];
 }
 
 export class UserDTO {
-  userId: string;
-  userName: string;
+  userId!: string;
+  userName!: string;
 }

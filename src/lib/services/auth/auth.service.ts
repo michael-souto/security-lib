@@ -63,7 +63,7 @@ export class AuthService implements OnDestroy {
       .toPromise()
       .then(async (response: any) => {
         this.saveToken(response);
-        this.createRefreshTokenTimer(this.payload['expiresIn']);
+        this.createRefreshTokenTimer(this.payload!['expiresIn']);
         this.eventBus.emit({ type: 'user:logged' });
         await this.saveLoginData(user, password);
         actionSussess();
@@ -93,7 +93,7 @@ export class AuthService implements OnDestroy {
     if (!this.isLogged()) {
       return;
     }
-    if (this.payload[subscriptionName] == null) {
+    if (this.payload![subscriptionName] == null) {
       this.getNewAccessToken().then(() => {
         console.info('Token de assinatura atualizado');
       }).catch((err) => {
@@ -113,7 +113,7 @@ export class AuthService implements OnDestroy {
       .toPromise()
       .then((response: any) => {
         this.saveToken(response);
-        this.createRefreshTokenTimer(this.payload['expiresIn']);
+        this.createRefreshTokenTimer(this.payload!['expiresIn']);
         return Promise.resolve(response);
       })
       .catch(async (response: any) => {
@@ -139,7 +139,7 @@ export class AuthService implements OnDestroy {
       });
   }
 
-  resetPassword(newPassword: string, confirmNewPassword: string, token: string = null): Promise<void> {
+  resetPassword(newPassword: string, confirmNewPassword: string, token: string | null = null): Promise<void> {
     const url = `${environment.apiUrlAuth}/auth/new_password`;
     const tokenRenew = token ?? localStorage.getItem(environment.tokenGetter);
     const headers = new HttpHeaders({
@@ -229,45 +229,48 @@ export class AuthService implements OnDestroy {
   }
 
   public getDetrasoftId(): number {
-    return this.payload?.detrasoftId;
+    return this.payload?.detrasoftId || 0;
   }
 
   public getUserId(): string {
-    return this.payload?.userId;
+    return this.payload?.userId || '';
   }
 
   public getUserFirstName(): string {
-    return this.payload?.firstName;
+    return this.payload?.firstName || '';
   }
 
   public getUserLastName(): string {
-    return this.payload?.lastName;
+    return this.payload?.lastName || '';
   }
   public getUserFullName(): string {
-    return `${this.payload?.firstName} ${this.payload?.lastName}`;
+    return `${this.payload?.firstName || ''} ${this.payload?.lastName || ''}`;
   }
 
   public getUserType(): string {
-    return this.payload?.type;
+    // @ts-ignore
+    return this.payload?.type || '';
   }
 
   public getUserBusiness(): string {
-    return this.payload?.business;
+    return this.payload?.business || '';
   }
 
   public getUrlImage(): string {
     const customImage = localStorage.getItem('user_url_image');
     if (customImage) return customImage;
     this.updateUrlImage(this.payload?.urlImg ?? 'assets/layout/images/avatar-64.png');
-    return customImage;
+    return customImage || '';
   }
 
   public getUserEmail(): string {
-    return this.payload['sub'];
+    return this.payload!['sub'] || '';
   }
 
-  updateUrlImage(urlImg: string) {
-    localStorage.setItem('user_url_image', urlImg);
+  updateUrlImage(urlImg: string | undefined | null) {
+    if (urlImg) {
+      localStorage.setItem('user_url_image', urlImg);
+    }
   }
 
   public redirectToLogin() {
@@ -290,7 +293,7 @@ export class AuthService implements OnDestroy {
     }
   }
 
-  refreshTokenTimer: ReturnType<typeof setTimeout>;
+  refreshTokenTimer!: ReturnType<typeof setTimeout>;
 
   createRefreshTokenTimer(expiresIn: number) {
     if (this.refreshTokenTimer) {
@@ -313,13 +316,13 @@ export class AuthService implements OnDestroy {
     }
   }
 
-  public async carregarToken(tokenGetter: string = null) {
+  public async carregarToken(tokenGetter: string | null = null) {
     this._isRefreshingToken.next(true);
     try {
       const token = localStorage.getItem(tokenGetter ?? environment.tokenGetter);
       if (token) {
         const dateExpiresIn = this.jwtHelper.getTokenExpirationDate(token);
-        const expiresIn = Math.floor((dateExpiresIn.getTime() - new Date().getTime()) / 1000);
+        const expiresIn = Math.floor((dateExpiresIn!.getTime() - new Date().getTime()) / 1000);
         if (expiresIn > 0) {
           this.createRefreshTokenTimer(expiresIn);
         } else {
