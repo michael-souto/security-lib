@@ -117,7 +117,7 @@ export class AuthService implements OnDestroy {
         return Promise.resolve(response);
       })
       .catch(async (response: any) => {
-        this.handleAccessRenewalError();
+        this.logout(environment.goToLoginOnTokenError);
         return Promise.resolve(response);
       });
   }
