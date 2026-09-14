@@ -33,6 +33,10 @@ export class HttpSecurityInterceptor implements HttpInterceptor {
       !req.url.includes(environment.endPointAPILogin) &&
       !req.url.includes(environment.endPointAPIRegister) &&
       !req.url.includes(environment.endPointAPIRefreshToken) &&
+      // O logout NAO pode passar por aqui: com o access token expirado o
+      // interceptor tentaria renovar antes de enviar o logout -- e o servidor
+      // revoga a sessao justamente pelo access token apresentado.
+      !req.url.includes(environment.endPointAPILogout) &&
       !req.url.includes('/public/') &&
       req.url.indexOf('/assets') < 0
       ) {

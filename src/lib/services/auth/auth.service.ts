@@ -24,6 +24,9 @@ export class AuthService implements OnDestroy {
     return this._isRefreshingToken.value;
   }
 
+  /** Requisicao de refresh em andamento (single-flight). */
+  private refreshInFlight: Promise<any> | null = null;
+
   get payload(): JwtPayload | null {
     const token = localStorage.getItem(environment.tokenGetter);
     if (token && !this.jwtHelper.isTokenExpired(token)) {
@@ -80,10 +83,33 @@ export class AuthService implements OnDestroy {
   }
 
   logout(redirect: boolean = true) {
+    // Avisa o authorization-server ANTES de descartar os tokens. Sem isso o
+    // refresh token (7 dias) continuaria renovando o acesso depois do logout.
+    this.notifyServerLogout();
+
     this.clearToken();
     if (redirect) {
       this.redirectToLogin();
     }
+  }
+
+  /**
+   * Revoga a sessao no servidor (access token + familia de refresh tokens).
+   * Fire-and-forget: o logout local nao pode depender da rede. A navegacao do
+   * SPA nao cancela o XHR, entao a requisicao conclui.
+   */
+  private notifyServerLogout(): void {
+    const accessToken = localStorage.getItem(environment.tokenGetter);
+    if (!accessToken) {
+      return;
+    }
+    const headers = new HttpHeaders().append('Authorization', `Bearer ${accessToken}`);
+    this.http
+      .post(environment.apiUrlAuth + environment.endPointAPILogout, null, { headers })
+      .toPromise()
+      .catch((error: any) => {
+        console.warn('Falha ao revogar a sessao no servidor:', error);
+      });
   }
 
   protected async saveLoginData(user: string, password: string){}
@@ -103,10 +129,19 @@ export class AuthService implements OnDestroy {
   }
 
   getNewAccessToken(): Promise<any> {
+    // Single-flight: chamadas concorrentes compartilham a MESMA requisicao.
+    // O refresh token passou a ser rotacionado no servidor, e reutilizar um
+    // token ja rotacionado e tratado como roubo (revoga a sessao). Como o timer,
+    // o retry de 401 e o checkSubscription podem disparar ao mesmo tempo, sem
+    // esta guarda o proprio usuario legitimo seria deslogado.
+    if (this.refreshInFlight) {
+      return this.refreshInFlight;
+    }
+
     const headersRefreshToken = new HttpHeaders()
       .append('Authorization', `Bearer ${localStorage.getItem(environment.refreshTokenGetter)}`);
 
-    return this.http
+    this.refreshInFlight = this.http
       .post(environment.apiUrlAuth + environment.endPointAPIRefreshToken, null, {
         headers: headersRefreshToken,
       })
@@ -119,7 +154,12 @@ export class AuthService implements OnDestroy {
       .catch(async (response: any) => {
         this.logout(environment.goToLoginOnTokenError);
         return Promise.resolve(response);
+      })
+      .finally(() => {
+        this.refreshInFlight = null;
       });
+
+    return this.refreshInFlight;
   }
 
   sendRecoveryEmail(email: string): Promise<void> {
