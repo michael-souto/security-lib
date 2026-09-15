@@ -57,10 +57,10 @@ export class AuthService implements OnDestroy {
 
     const headersLogin = new HttpHeaders().append('Content-Type', 'application/json');
     const body = JSON.stringify({email: user,password: password});
-    console.log('Iniciando request na URL ', environment.apiUrlAuth + environment.endPointAPILogin);
+    console.log('Iniciando request na URL ', `${environment.apiUrlAuth}/authorization-server${environment.endPointAPILogin}`);
 
     return this.http
-      .post(environment.apiUrlAuth + environment.endPointAPILogin, body, {
+      .post(`${environment.apiUrlAuth}/authorization-server${environment.endPointAPILogin}`, body, {
         headers: headersLogin
       })
       .toPromise()
@@ -105,7 +105,7 @@ export class AuthService implements OnDestroy {
     }
     const headers = new HttpHeaders().append('Authorization', `Bearer ${accessToken}`);
     this.http
-      .post(environment.apiUrlAuth + environment.endPointAPILogout, null, { headers })
+      .post(`${environment.apiUrlAuth}/authorization-server${environment.endPointAPILogin}`, null, { headers })
       .toPromise()
       .catch((error: any) => {
         console.warn('Falha ao revogar a sessao no servidor:', error);
@@ -142,7 +142,7 @@ export class AuthService implements OnDestroy {
       .append('Authorization', `Bearer ${localStorage.getItem(environment.refreshTokenGetter)}`);
 
     this.refreshInFlight = this.http
-      .post(environment.apiUrlAuth + environment.endPointAPIRefreshToken, null, {
+      .post(`${environment.apiUrlAuth}/authorization-server${environment.endPointAPIRefreshToken}`, null, {
         headers: headersRefreshToken,
       })
       .toPromise()
@@ -163,7 +163,7 @@ export class AuthService implements OnDestroy {
   }
 
   sendRecoveryEmail(email: string): Promise<void> {
-    const url = `${environment.apiUrlAuth}/auth/send_email_new_password`;
+    const url = `${environment.apiUrlAuth}/authorization-server/auth/send_email_new_password`;
     const headers = new HttpHeaders({
       'Content-Type': 'text/plain'
     });
@@ -180,7 +180,7 @@ export class AuthService implements OnDestroy {
   }
 
   resetPassword(newPassword: string, confirmNewPassword: string, token: string | null = null): Promise<void> {
-    const url = `${environment.apiUrlAuth}/auth/new_password`;
+    const url = `${environment.apiUrlAuth}/authorization-server/auth/new_password`;
     const tokenRenew = token ?? localStorage.getItem(environment.tokenGetter);
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
