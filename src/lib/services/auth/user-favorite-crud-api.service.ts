@@ -8,7 +8,7 @@ import { environment } from "src/environments/environment";
 })
 export class UserFavoriteCrudApiService extends CrudApiService<UserFavorite> {
   override getAdressAPI(masterId: string = null): string {
-    return environment.apiURLGateway + "/authorization-server/users/:masterId/favorites";
+    return environment.apiUrlAuth + "/authorization-server/users/:masterId/favorites";
     //return "http://localhost:32000/users"
   }
 }

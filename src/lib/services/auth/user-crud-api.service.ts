@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class UserCrudApiService extends CrudApiService<User> {
   override getAdressAPI(masterId: string = null): string {
-    return environment.apiURLGateway + '/authorization-server/users'
+    return environment.apiUrlAuth + '/authorization-server/users'
     //return "http://localhost:32000/users"
   }
 }

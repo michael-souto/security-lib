@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ProfileCrudApiService extends CrudApiService<Profile> {
   override getAdressAPI(masterId: string = null): string {
-    return environment.apiURLGateway + '/authorization-server/profiles';
+    return environment.apiUrlAuth + '/authorization-server/profiles';
     return "http://localhost:32000/profiles"
 
   }
