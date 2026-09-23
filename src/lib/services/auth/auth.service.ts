@@ -152,7 +152,7 @@ export class AuthService implements OnDestroy {
         return Promise.resolve(response);
       })
       .catch(async (response: any) => {
-        this.logout(environment.goToLoginOnTokenError);
+        await this.handleAccessRenewalError();
         return Promise.resolve(response);
       })
       .finally(() => {
@@ -254,18 +254,33 @@ export class AuthService implements OnDestroy {
   }
 
   public isLoginPage(): boolean {
-    let url = this.getLoginPage();
-    return window.location.href == url + environment.routePageLogin;
+    const url = this.getLoginPage();
+    const href = window.location.href;
+    return (
+      href === url + environment.routePageLogin ||
+      href.includes(environment.routePageLogin) ||
+      this.router.url.includes(environment.routePageLogin)
+    );
   }
 
   public isRegisterPage(): boolean {
-    let url = this.getLoginPage();
-    return window.location.href.indexOf(url + environment.routePageRegister) >= 0;
+    const url = this.getLoginPage();
+    const href = window.location.href;
+    return (
+      href.indexOf(url + environment.routePageRegister) >= 0 ||
+      href.includes(environment.routePageRegister) ||
+      this.router.url.includes(environment.routePageRegister)
+    );
   }
 
   public isNewPasswordPage(): boolean {
-    let url = this.getLoginPage();
-    return window.location.href == url + environment.routePageNewPassword;
+    const url = this.getLoginPage();
+    const href = window.location.href;
+    return (
+      href === url + environment.routePageNewPassword ||
+      href.includes(environment.routePageNewPassword) ||
+      this.router.url.includes(environment.routePageNewPassword)
+    );
   }
 
   public getDetrasoftId(): number {

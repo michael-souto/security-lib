@@ -33,10 +33,9 @@ export class HttpSecurityInterceptor implements HttpInterceptor {
       !req.url.includes(environment.endPointAPILogin) &&
       !req.url.includes(environment.endPointAPIRegister) &&
       !req.url.includes(environment.endPointAPIRefreshToken) &&
-      // O logout NAO pode passar por aqui: com o access token expirado o
-      // interceptor tentaria renovar antes de enviar o logout -- e o servidor
-      // revoga a sessao justamente pelo access token apresentado.
       !req.url.includes(environment.endPointAPILogout) &&
+      !req.url.includes('/biometric-renew') &&
+      !req.url.includes('/biometric-enable') &&
       !req.url.includes('/public/') &&
       req.url.indexOf('/assets') < 0
       ) {
@@ -61,7 +60,14 @@ export class HttpSecurityInterceptor implements HttpInterceptor {
     } else {
       return next.handle(req).pipe(
         catchError((error: HttpErrorResponse) => {
-          if (error.status === 401) {
+          if (
+            error.status === 401 &&
+            !this.auth.isLoginPage() &&
+            !req.url.includes(environment.endPointAPILogin) &&
+            !req.url.includes(environment.endPointAPIRefreshToken) &&
+            !req.url.includes('/biometric-renew') &&
+            !req.url.includes('/biometric-enable')
+          ) {
             this.auth.redirectToLogin();
           }
           return throwError(() => new HttpErrorResponse(error));

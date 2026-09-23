@@ -12,5 +12,6 @@ export interface JwtPayload extends User {
 export interface AuthenticationResponse {
   access_token: string;
   refresh_token: string;
+  biometric_session_token?: string;
   message: string;
 }
